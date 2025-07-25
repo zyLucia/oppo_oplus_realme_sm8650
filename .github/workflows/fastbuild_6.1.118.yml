@@ -210,7 +210,7 @@ jobs:
           # KSU_VERSION_FULL: 完整版本定义
           VERSION_DEFINITIONS=$(cat << EOF
           define get_ksu_version_full
-          v\\$1-SukiSU-cctv18
+          v\\$1-SukiSU-zyLucia
           endef
 
           KSU_VERSION_API := $KSU_API_VERSION
