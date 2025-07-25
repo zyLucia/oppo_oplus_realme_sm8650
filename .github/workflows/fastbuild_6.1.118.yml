@@ -214,7 +214,7 @@ jobs:
           endef
 
           KSU_VERSION_API := $KSU_API_VERSION
-          KSU_VERSION_FULL := v$KSU_API_VERSION-SukiSU-cctv18
+          KSU_VERSION_FULL := v$KSU_API_VERSION-SukiSU-zyLucia
           EOF
               )
           # 清理内核 Makefile 中的旧版本定义
