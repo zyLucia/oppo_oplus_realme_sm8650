@@ -126,6 +126,8 @@ if [[ "$KSU_BRANCH" == "y" ]]; then
   cp ./susfs4ksu/kernel_patches/include/linux/* ./common/include/linux/
   cd ./common
   patch -p1 < 50_add_susfs_in_gki-android14-6.1.patch || true
+  #临时修复task_mmu.c在部分内核版本补丁后找不到show_pad方法的问题
+  sed -i 's/goto show_pad;/return 0;/g' ./fs/proc/task_mmu.c
   if [[ "$APPLY_HOOKS" == "m" || "$APPLY_HOOKS" == "M" ]]; then
     patch -p1 < scope_min_manual_hooks_v1.5.patch || true
   fi
@@ -148,6 +150,8 @@ else
   cp ./kernel_patches/69_hide_stuff.patch ./common/
   cd ./common
   patch -p1 < 50_add_susfs_in_gki-android14-6.1.patch || true
+  #临时修复task_mmu.c在部分内核版本补丁后找不到show_pad方法的问题
+  sed -i 's/goto show_pad;/return 0;/g' ./fs/proc/task_mmu.c
   if [[ "$APPLY_HOOKS" == "m" || "$APPLY_HOOKS" == "M" ]]; then
     patch -p1 -N -F 3 < scope_min_manual_hooks_v1.5.patch || true
   fi
