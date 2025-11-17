@@ -19,15 +19,6 @@ on:
           - 'ksunext'
           - 'mksu'
           - 'ksu'
-      hook_method:
-        description: hook模式(大部分情况manual即可，若新版manual钩子出现问题可尝试syscall, 少数需切换sus su模式的场景才需要kprobes钩子)
-        required: true
-        type: choice
-        default: 'manual'
-        options:
-          - 'manual'
-          - 'syscall'
-          - 'kprobes'
       kpm_enable:
         description: '是否开启kpm(仅对sukisu生效; 可能轻微增加耗电，不需要可保持默认关闭)'
         required: true
@@ -279,21 +270,11 @@ jobs:
             cp ./susfs4ksu/kernel_patches/50_add_susfs_in_gki-${{ env.ANDROID_VERSION }}-${{ env.KERNEL_VERSION }}.patch ./common/
             cp ./susfs4ksu/kernel_patches/fs/* ./common/fs/
             cp ./susfs4ksu/kernel_patches/include/linux/* ./common/include/linux/
-            if [[ ${{ github.event.inputs.hook_method }} == "manual" ]]; then
-              cp ./SukiSU_patch/hooks/scope_min_manual_hooks_v1.6.patch ./common/
-            fi
-            if [[ ${{ github.event.inputs.hook_method }} == "syscall" ]]; then
-              cp ./SukiSU_patch/hooks/syscall_hooks.patch ./common/
-            fi
+            cp ./SukiSU_patch/hooks/scope_min_manual_hooks_v1.6.patch ./common/
             cp ./SukiSU_patch/69_hide_stuff.patch ./common/
             cd ./common
             patch -p1 < 50_add_susfs_in_gki-${{ env.ANDROID_VERSION }}-${{ env.KERNEL_VERSION }}.patch || true
-            if [[ ${{ github.event.inputs.hook_method }} == "manual" ]]; then
-              patch -p1 < scope_min_manual_hooks_v1.6.patch || true
-            fi
-            if [[ ${{ github.event.inputs.hook_method }} == "syscall" ]]; then
-              patch -p1 < syscall_hooks.patch || true
-            fi
+            patch -p1 < scope_min_manual_hooks_v1.6.patch || true
             patch -p1 < 69_hide_stuff.patch || true
           elif [[ ${{ github.event.inputs.ksu_type }} == "ksunext" ]]; then
             echo "正在添加KernelSU Next补丁..."
@@ -302,21 +283,11 @@ jobs:
             cp ./susfs4ksu/kernel_patches/50_add_susfs_in_gki-${{ env.ANDROID_VERSION }}-${{ env.KERNEL_VERSION }}.patch ./common/
             cp ./susfs4ksu/kernel_patches/fs/* ./common/fs/
             cp ./susfs4ksu/kernel_patches/include/linux/* ./common/include/linux/
-            if [[ ${{ github.event.inputs.hook_method }} == "manual" ]]; then
-              cp ./kernel_patches/next/scope_min_manual_hooks_v1.5.patch ./common/
-            fi
-            if [[ ${{ github.event.inputs.hook_method }} == "syscall" ]]; then
-              cp ./kernel_patches/next/syscall_hooks.patch ./common/
-            fi
+            cp ./kernel_patches/next/scope_min_manual_hooks_v1.5.patch ./common/
             cp ./kernel_patches/69_hide_stuff.patch ./common/
             cd ./common
             patch -p1 < 50_add_susfs_in_gki-${{ env.ANDROID_VERSION }}-${{ env.KERNEL_VERSION }}.patch || true
-            if [[ ${{ github.event.inputs.hook_method }} == "manual" ]]; then
-              patch -p1 -N -F 3 < scope_min_manual_hooks_v1.5.patch || true
-            fi
-            if [[ ${{ github.event.inputs.hook_method }} == "syscall" ]]; then
-              patch -p1 -N -F 3 < syscall_hooks.patch || true
-            fi
+            patch -p1 -N -F 3 < scope_min_manual_hooks_v1.5.patch || true
             patch -p1 -N -F 3 < 69_hide_stuff.patch || true
             #为KernelSU Next添加WildKSU管理器支持
             cd ./drivers/kernelsu
@@ -330,12 +301,6 @@ jobs:
             cp ./susfs4ksu/kernel_patches/50_add_susfs_in_gki-${{ env.ANDROID_VERSION }}-${{ env.KERNEL_VERSION }}.patch ./common/
             cp ./susfs4ksu/kernel_patches/fs/* ./common/fs/
             cp ./susfs4ksu/kernel_patches/include/linux/* ./common/include/linux/
-            if [[ ${{ github.event.inputs.hook_method }} == "manual" ]]; then
-              cp ./SukiSU_patch/hooks/scope_min_manual_hooks_v1.6.patch ./common/
-            fi
-            if [[ ${{ github.event.inputs.hook_method }} == "syscall" ]]; then
-              cp ./SukiSU_patch/hooks/syscall_hooks.patch ./common/
-            fi
             cp ./SukiSU_patch/69_hide_stuff.patch ./common/
             cd ./KernelSU
             patch -p1 < 10_enable_susfs_for_ksu.patch || true
@@ -343,12 +308,6 @@ jobs:
             patch -p1 < fix_umount.patch || true
             cd ../common
             patch -p1 < 50_add_susfs_in_gki-${{ env.ANDROID_VERSION }}-${{ env.KERNEL_VERSION }}.patch || true
-            if [[ ${{ github.event.inputs.hook_method }} == "manual" ]]; then
-              patch -p1 -N -F 3 < scope_min_manual_hooks_v1.6.patch || true
-            fi
-            if [[ ${{ github.event.inputs.hook_method }} == "syscall" ]]; then
-              patch -p1 -N -F 3 < syscall_hooks.patch || true
-            fi
             patch -p1 -N -F 3 < 69_hide_stuff.patch || true
           else
             echo "正在为原版 KernelSU (tiann/KernelSU)添加补丁..."
@@ -358,12 +317,6 @@ jobs:
             cp ./susfs4ksu/kernel_patches/50_add_susfs_in_gki-${{ env.ANDROID_VERSION }}-${{ env.KERNEL_VERSION }}.patch ./common/
             cp ./susfs4ksu/kernel_patches/fs/* ./common/fs/
             cp ./susfs4ksu/kernel_patches/include/linux/* ./common/include/linux/
-            if [[ ${{ github.event.inputs.hook_method }} == "manual" ]]; then
-              cp ./SukiSU_patch/hooks/scope_min_manual_hooks_v1.6.patch ./common/
-            fi
-            if [[ ${{ github.event.inputs.hook_method }} == "syscall" ]]; then
-              cp ./SukiSU_patch/hooks/syscall_hooks.patch ./common/
-            fi
             cp ./SukiSU_patch/69_hide_stuff.patch ./common/
             cd ./KernelSU
             patch -p1 < 10_enable_susfs_for_ksu.patch || true
@@ -371,12 +324,6 @@ jobs:
             patch -p1 < fix_umount.patch || true
             cd ../common
             patch -p1 < 50_add_susfs_in_gki-${{ env.ANDROID_VERSION }}-${{ env.KERNEL_VERSION }}.patch || true
-            if [[ ${{ github.event.inputs.hook_method }} == "manual" ]]; then
-              patch -p1 -N -F 3 < scope_min_manual_hooks_v1.6.patch || true
-            fi
-            if [[ ${{ github.event.inputs.hook_method }} == "syscall" ]]; then
-              patch -p1 -N -F 3 < syscall_hooks.patch || true
-            fi
             patch -p1 -N -F 3 < 69_hide_stuff.patch || true
           fi
           
@@ -416,16 +363,6 @@ jobs:
           echo "CONFIG_KSU=y" >> ./common/arch/arm64/configs/gki_defconfig
           if [[ ${{ github.event.inputs.kpm_enable }} == 'true' && ${{ github.event.inputs.ksu_type }} == "sukisu" ]]; then
             echo "CONFIG_KPM=y" >> ./common/arch/arm64/configs/gki_defconfig
-          fi
-          if [ "${{ github.event.inputs.hook_method }}" == "kprobes" ]; then
-            echo "正在开启kprobes钩子..."
-            echo "CONFIG_KSU_SUSFS_SUS_SU=y" >> ./common/arch/arm64/configs/gki_defconfig
-            echo "CONFIG_KSU_MANUAL_HOOK=n" >> ./common/arch/arm64/configs/gki_defconfig
-            echo "CONFIG_KSU_KPROBES_HOOK=y" >> ./common/arch/arm64/configs/gki_defconfig
-          else
-            echo "正在开启manual/syscall钩子..."
-            echo "CONFIG_KSU_MANUAL_HOOK=y" >> ./common/arch/arm64/configs/gki_defconfig
-            echo "CONFIG_KSU_SUSFS_SUS_SU=n" >> ./common/arch/arm64/configs/gki_defconfig
           fi
           echo "CONFIG_KSU_SUSFS=y" >> ./common/arch/arm64/configs/gki_defconfig
           echo "CONFIG_KSU_SUSFS_HAS_MAGIC_MOUNT=y" >> ./common/arch/arm64/configs/gki_defconfig
@@ -813,8 +750,7 @@ jobs:
             - 内核版本号: ${{ env.FULL_VERSION }}
             - 编译时间: ${{ env.TIME_FORM }}
             - 机型：欧加真骁龙8Gen3 6.1.75 Android 15内核通用（基于一加12 6.1.75 Android 15 版官方OKI源码）
-            - 特性：${{ env.KSU_BRANCH }} + SUSFS + VFS + KPM
-            - hook模式：${{ github.event.inputs.hook_method }}
+            - 特性：${{ env.KSU_BRANCH }} + SUSFS + KPM
             - KPM支持 (仅对sukisu生效)：${{ github.event.inputs.kpm_enable }}
             - LZ4KD支持：${{ env.lz4kd_enable }}
             - LZ4支持：${{ env.lz4_zstd_enable }}
@@ -826,6 +762,8 @@ jobs:
             - 推荐系统：ColorOS 15 / RealmeUI 6.0
             - SukiSU Ultra管理器下载：[SukiSU-Ultra](https://github.com/SukiSU-Ultra/SukiSU-Ultra/releases)
             - KernelSU Next管理器下载：[KernelSU-Next](https://github.com/KernelSU-Next/KernelSU-Next/releases)
+            - MKSU管理器下载：[Magic-KernelSU](https://github.com/5ec1cff/KernelSU/actions)
+            - KSU原版管理器下载：[KernelSU](https://github.com/tiann/KernelSU/releases)
             ### ⏫️ 更新内容：
             - 更新${{ env.KSU_BRANCH }}至最新版本（${{ needs.build.outputs.ksuver }}）
             - (预留)
