@@ -650,8 +650,12 @@ jobs:
           fi
           if [[ ${{ github.event.inputs.ksu_type }} == "sukisu" ]]; then
             KSU_TYPENAME="SukiSU"
-          else
+          elif [[ ${{ github.event.inputs.ksu_type }} == "ksunext" ]]; then
             KSU_TYPENAME="KSUNext"
+          elif [[ ${{ github.event.inputs.ksu_type }} == "mksu" ]]; then
+            KSU_TYPENAME="MKSU"
+          else
+            KSU_TYPENAME="KSU"
           fi
           if [[ "${{ github.event.inputs.lz4_enable }}" == "2" || "${{ github.event.inputs.lz4_enable }}" == "3" ]]; then
             wget https://raw.githubusercontent.com/cctv18/oppo_oplus_realme_sm8650/refs/heads/main/zram.zip
